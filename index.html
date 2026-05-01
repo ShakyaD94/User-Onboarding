@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldSync Onboarding & Compliance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-cursive { font-family: 'Dancing Script', cursive; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .fade-in-slide {
+            animation: fadeInSlide 0.4s ease-out forwards;
+        }
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Paper texture for the document viewer */
+        .document-viewer {
+            background-image: 
+                linear-gradient(#f8fafc 1px, transparent 1px),
+                linear-gradient(90deg, #f8fafc 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .toggle-bg {
+            transition: background-color 0.3s ease;
+        }
+        .toggle-dot {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Native date picker icon hide for clean overlay */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-900 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-800 to-slate-950 flex flex-col items-center justify-center p-4 antialiased">
+
+    <!-- Realistic iOS Phone Wrapper -->
+    <div class="relative border-[12px] border-[#1a1a1c] rounded-[3.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8),0_0_0_2px_rgba(255,255,255,0.1)_inset] bg-[#F3F4F6] w-full max-w-[400px] h-[844px] overflow-hidden flex flex-col">
+        
+        <!-- Screen Glare Effect -->
+        <div class="absolute top-0 right-0 w-[150%] h-[150%] bg-gradient-to-bl from-white/10 to-transparent pointer-events-none transform -translate-x-[20%] -translate-y-[20%] rotate-12 z-50 mix-blend-overlay"></div>
+
+        <!-- iOS Dynamic Island -->
+        <div class="absolute top-3 left-1/2 -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-50 flex items-center justify-between px-2.5 shadow-[inset_0_0_4px_rgba(255,255,255,0.15)]">
+            <div class="w-6 h-6 bg-[#0f0f11] rounded-full flex items-center justify-center relative overflow-hidden">
+                <div class="w-2.5 h-2.5 bg-blue-500/20 rounded-full blur-[2px]"></div>
+                <div class="w-1.5 h-1.5 bg-blue-900 absolute rounded-full"></div>
+            </div>
+            <div class="w-2 h-2 bg-emerald-500 rounded-full opacity-60 shadow-[0_0_4px_rgba(16,185,129,0.8)] mr-1"></div>
+        </div>
+
+        <!-- iOS Home Indicator -->
+        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-[130px] h-[5px] bg-slate-900/40 rounded-full z-50 backdrop-blur-md"></div>
+
+        <!-- Main App Container -->
+        <div id="app-container" class="w-full h-full relative flex flex-col overflow-hidden">
+            
+            <!-- Loading Overlay -->
+            <div id="loading-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-[60] hidden">
+                <div class="w-10 h-10 border-[3px] border-slate-200 border-t-purple-600 rounded-full animate-spin shadow-sm"></div>
+            </div>
+
+            <!-- Global Header -->
+            <div id="app-header" class="pt-14 pb-3 px-6 flex items-center justify-center gap-2.5 bg-white/90 backdrop-blur-lg z-10 shrink-0 hidden shadow-sm border-b border-slate-100">
+                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-sm shadow-sm">F</div>
+                <h1 class="text-lg font-black text-slate-900 tracking-tight">FIELD<span class="text-purple-600">SYNC</span></h1>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="onboarding-progress" class="w-full h-[5px] flex gap-1 px-5 mb-3 mt-2 hidden shrink-0 z-10">
+                <!-- Segments injected by JS -->
+            </div>
+
+            <!-- Content Area -->
+            <div id="main-content" class="relative z-0 flex-1 h-full flex flex-col overflow-hidden">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+
+    <p class="mt-8 text-[11px] font-bold text-slate-400 uppercase tracking-[0.3em] drop-shadow-md">Corporate Logistics Division</p>
+
+    <script>
+        // Reusable consistent styles
+        const primaryBtnStyle = "w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-[16px] rounded-2xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0";
+        const inputClass = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[14px] font-medium text-slate-800 shadow-sm focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all";
+
+        // State Management
+        let currentView = 'TEAM_DASHBOARD';
+        let currentStepIndex = 0;
+        let currentFlow = [1, 2, 3, 4, 5, 6, 7];
+        let isRegionDropdownOpen = false;
+        let formData = {
+            firstName: 'Riley',
+            lastName: 'Vance',
+            email: 'r.vance@fieldsync.io',
+            inviteEmail: '',
+            regions: [],
+            manager: 'Jordan Smyth',
+            dob: '',
+            phone: '',
+            phoneAlt: '',
+            street: '',
+            city: '',
+            postalCode: '',
+            licenseNumber: '',
+            licenseClass: 'Class D',
+            licenseIssueDate: '',
+            licenseExpiry: '',
+            insuranceCarrier: '',
+            vehicleType: 'Sedan',
+            signature: '',
+            consents: {
+                privacy: false,
+                background: false,
+                terms: false
+            },
+            locationEnabled: true,
+            cameraEnabled: true,
+            notifications: {
+                dispatch: true,
+                followUp: true,
+                tasks: true,
+                checklist: false
+            },
+            role: '',
+            vpSettings: {
+                team_top: true,
+                team_under: true,
+                team_score: true,
+                eff_windshield: true,
+                eff_meeting: true,
+                eff_crm: true,
+                pipe_value: true,
+                pipe_stuck: true,
+                alert_risk: true
+            },
+            tmSettings: {
+                target_achievement: true,
+                target_daily: true,
+                target_progress: true,
+                team_rep: true,
+                team_low: true,
+                team_attendance: true,
+                field_today: true,
+                field_missed: true,
+                field_route: true,
+                pipe_active: true,
+                pipe_stuck: true,
+                alert_team: true
+            }
+        };
+
+        const existingUsers = [
+            { id: 1, name: 'Alex Rivera', role: 'Business Owner', initial: 'AR', color: 'bg-emerald-500 text-white' },
+            { id: 2, name: 'Sarah Chen', role: 'Vice President', initial: 'SC', color: 'bg-amber-500 text-white' },
+            { id: 3, name: 'Jordan Smyth', role: 'Team Manager', initial: 'JS', color: 'bg-indigo-500 text-white' },
+            { id: 4, name: 'Riley Vance', role: 'Sales Rep', initial: 'RV', color: 'bg-purple-500 text-white' },
+            { id: 5, name: 'Taylor Reed', role: 'Sales Rep', initial: 'TR', color: 'bg-pink-500 text-white' },
+        ];
+
+        function render() {
+            const container = document.getElementById('main-content');
+            const progress = document.getElementById('onboarding-progress');
+            const header = document.getElementById('app-header');
+            
+            if (currentView === 'ONBOARDING') {
+                progress.classList.remove('hidden');
+                header.classList.remove('hidden');
+                updateProgressBar();
+                renderStep(container);
+            } else if (currentView === 'TEAM_DASHBOARD') {
+                progress.classList.add('hidden');
+                header.classList.remove('hidden'); 
+                renderDashboard(container);
+            } else if (currentView === 'INVITE_FORM') {
+                progress.classList.add('hidden');
+                header.classList.remove('hidden');
+                renderInviteForm(container);
+            } else if (currentView === 'LOGIN') {
+                progress.classList.add('hidden');
+                header.classList.remove('hidden');
+                renderLogin(container);
+            } else if (currentView === 'MAGIC_LINK') {
+                progress.classList.add('hidden');
+                header.classList.remove('hidden');
+                renderMagicLink(container);
+            } else if (currentView === 'MAGIC_LINK_SENT') {
+                progress.classList.add('hidden');
+                header.classList.remove('hidden');
+                renderMagicLinkSent(container);
+            }
+            lucide.createIcons();
+        }
+
+        function updateProgressBar() {
+            const progressContainer = document.getElementById('onboarding-progress');
+            progressContainer.innerHTML = '';
+            for(let i=0; i<currentFlow.length; i++) {
+                const seg = document.createElement('div');
+                seg.className = `progress-segment flex-1 rounded-full transition-all duration-300 ${i <= currentStepIndex ? 'bg-purple-600' : 'bg-slate-200'}`;
+                progressContainer.appendChild(seg);
+            }
+        }
+
+        function showLoading(callback) {
+            const loader = document.getElementById('loading-overlay');
+            loader.classList.remove('hidden');
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                callback();
+            }, 300);
+        }
+
+        function updateData(key, value) {
+            formData[key] = value;
+        }
+
+        function toggleRegionDropdown() {
+            isRegionDropdownOpen = !isRegionDropdownOpen;
+            if (currentView === 'INVITE_FORM') {
+                renderInviteForm(document.getElementById('main-content'));
+            } else if (currentView === 'MAGIC_LINK') {
+                renderMagicLink(document.getElementById('main-content'));
+            }
+            lucide.createIcons();
+        }
+
+        function toggleRegion(region, event) {
+            if (event) event.stopPropagation();
+            if (formData.regions.includes(region)) {
+                formData.regions = formData.regions.filter(r => r !== region);
+            } else {
+                formData.regions.push(region);
+            }
+            if (currentView === 'INVITE_FORM') {
+                renderInviteForm(document.getElementById('main-content'));
+            } else if (currentView === 'MAGIC_LINK') {
+                renderMagicLink(document.getElementById('main-content'));
+            }
+            lucide.createIcons();
+        }
+
+        function updateConsent(key, value) {
+            formData.consents[key] = value;
+            checkStep3Completion();
+        }
+
+        function toggleNotification(key) {
+            formData.notifications[key] = !formData.notifications[key];
+            renderStep(document.getElementById('main-content'));
+        }
+
+        function toggleVPSettings(key) {
+            formData.vpSettings[key] = !formData.vpSettings[key];
+            renderStep(document.getElementById('main-content'));
+        }
+
+        function toggleTMSettings(key) {
+            formData.tmSettings[key] = !formData.tmSettings[key];
+            renderStep(document.getElementById('main-content'));
+        }
+
+        function renderDashboard(container) {
+            container.innerHTML = `
+                <div class="fade-in-slide flex flex-col h-full relative pb-8 pt-2 px-5">
+                    <div class="flex justify-between items-center mb-5 shrink-0">
+                        <div>
+                            <h3 class="text-[20px] font-black text-slate-900 tracking-tight">Team Roster</h3>
+                            <p class="text-[12px] text-slate-500 font-medium mt-0.5">Manage and review members</p>
+                        </div>
+                        <div class="w-10 h-10 bg-purple-50 border border-purple-100 rounded-xl flex items-center justify-center text-purple-600">
+                            <i data-lucide="users" size="18"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+                        ${existingUsers.map(user => `
+                            <div class="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-purple-300 transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-11 h-11 ${user.color} rounded-xl flex items-center justify-center font-bold text-[14px] shadow-sm">${user.initial}</div>
+                                    <div>
+                                        <p class="text-[15px] font-bold text-slate-800 tracking-tight group-hover:text-purple-700 transition-colors">${user.name}</p>
+                                        <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">${user.role}</p>
+                                    </div>
+                                </div>
+                                <button class="p-2 text-slate-400 group-hover:text-purple-600 group-hover:bg-purple-50 rounded-full transition-colors"><i data-lucide="more-horizontal" size="18"></i></button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="pt-4 mt-2 border-t border-slate-100 shrink-0 space-y-3">
+                        <button onclick="changeView('INVITE_FORM')" class="${primaryBtnStyle}">
+                            <i data-lucide="plus" size="18"></i> Invite New Member
+                        </button>
+                        <button onclick="changeView('LOGIN')" class="w-full py-3.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-[15px] rounded-2xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0">
+                            <i data-lucide="log-in" size="18"></i> Go to Login Screen
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderInviteForm(container) {
+            const showRegion = formData.role === 'Team Manager' || formData.role === 'Admin';
+            const showManager = formData.role === 'Sales Representative';
+            
+            container.innerHTML = `
+                <div class="px-5 pb-8 space-y-6 fade-in-slide h-full flex flex-col">
+                    <div class="flex items-center gap-3 mb-2 shrink-0 pt-2">
+                        <button onclick="changeView('TEAM_DASHBOARD')" class="p-2.5 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 rounded-xl transition-colors"><i data-lucide="chevron-left" size="18" class="text-slate-600"></i></button>
+                        <h2 class="text-[20px] font-black text-slate-900 tracking-tight">New Invite</h2>
+                    </div>
+                    <div class="space-y-5 flex-1">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Email Address</label>
+                            <input id="inviteEmail" type="email" class="${inputClass}" placeholder="name@company.com" oninput="formData.inviteEmail = this.value" value="${formData.inviteEmail || ''}">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Organization Role</label>
+                            <div class="relative">
+                                <select id="inviteRole" class="${inputClass} appearance-none cursor-pointer pr-10" onchange="formData.role = this.value; isRegionDropdownOpen = false; renderInviteForm(document.getElementById('main-content')); lucide.createIcons();">
+                                    <option value="" disabled ${formData.role === '' ? 'selected' : ''} hidden>Select a role...</option>
+                                    <option value="Sales Representative" ${formData.role === 'Sales Representative' ? 'selected' : ''}>Sales Representative</option>
+                                    <option value="Team Manager" ${formData.role === 'Team Manager' ? 'selected' : ''}>Team Manager</option>
+                                    <option value="Admin" ${formData.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size="16"></i>
+                            </div>
+                        </div>
+                        
+                        ${showRegion ? `
+                        <div class="fade-in-slide relative z-50">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Region Assignment (Multiple)</label>
+                            <div class="relative">
+                                <div class="${inputClass} flex justify-between items-center cursor-pointer select-none" onclick="toggleRegionDropdown()">
+                                    <span class="truncate block pr-4">${formData.regions.length > 0 ? formData.regions.join(', ') : 'Select regions...'}</span>
+                                    <i data-lucide="${isRegionDropdownOpen ? 'chevron-up' : 'chevron-down'}" class="text-slate-400 shrink-0 pointer-events-none" size="16"></i>
+                                </div>
+                                
+                                ${isRegionDropdownOpen ? `
+                                <!-- Invisible Backdrop to close dropdown -->
+                                <div class="fixed inset-0 z-40" onclick="toggleRegionDropdown()"></div>
+                                
+                                <!-- Dropdown Menu -->
+                                <div class="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto custom-scrollbar">
+                                    ${['Dallas', 'Chicago', 'New York', 'Los Angeles', 'Miami', 'Seattle'].map(r => `
+                                        <div class="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0 transition-colors" onclick="toggleRegion('${r}', event)">
+                                            <span class="text-[14px] ${formData.regions.includes(r) ? 'font-bold text-purple-700' : 'text-slate-700'}">${r}</span>
+                                            ${formData.regions.includes(r) ? `<i data-lucide="check" size="16" class="text-purple-600"></i>` : `<div class="w-4 h-4"></div>`}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        ${showManager ? `
+                        <div class="fade-in-slide">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Reporting Manager</label>
+                            <div class="relative">
+                                <select id="inviteManager" class="${inputClass} appearance-none cursor-pointer pr-10" onchange="formData.manager = this.value">
+                                    <option ${formData.manager === 'Jordan Smyth' ? 'selected' : ''}>Jordan Smyth</option>
+                                    <option ${formData.manager === 'Marcus Chen' ? 'selected' : ''}>Marcus Chen</option>
+                                    <option ${formData.manager === 'Priya Patel' ? 'selected' : ''}>Priya Patel</option>
+                                    <option ${formData.manager === 'David Kim' ? 'selected' : ''}>David Kim</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size="16"></i>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <button onclick="startOnboarding()" ${formData.role === '' ? 'disabled' : ''} class="${primaryBtnStyle} disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600 disabled:active:scale-100">
+                        Send Invite Link <i data-lucide="send" size="18"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderLogin(container) {
+            container.innerHTML = `
+                <div class="px-5 pb-8 space-y-6 fade-in-slide h-full flex flex-col justify-center">
+                    <div class="text-center shrink-0 mb-6">
+                        <div class="w-20 h-20 bg-purple-50 text-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-5 border border-purple-100 shadow-sm"><i data-lucide="lock" size="36"></i></div>
+                        <h2 class="text-[26px] font-black text-slate-900 tracking-tight">Welcome Back</h2>
+                        <p class="text-slate-500 mt-2 text-[14px]">Sign in to access your dashboard.</p>
+                    </div>
+                    <div class="space-y-5 shrink-0">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Email Address</label>
+                            <input type="email" class="${inputClass}" placeholder="name@company.com" value="${formData.email}">
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-end mb-2 ml-1 mr-1">
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Password</label>
+                                <a href="#" class="text-[12px] font-bold text-purple-600 hover:text-purple-700 transition-colors">Forgot?</a>
+                            </div>
+                            <input type="password" class="${inputClass}" placeholder="••••••••">
+                        </div>
+                    </div>
+                    <div class="pt-6">
+                        <button onclick="resetToDash()" class="${primaryBtnStyle}">
+                            Sign In <i data-lucide="arrow-right" size="18"></i>
+                        </button>
+                    </div>
+                    <div class="mt-5 text-center">
+                        <button onclick="goToMagicLinkSignup()" class="text-[13px] font-bold text-slate-500 hover:text-purple-600 transition-colors flex items-center justify-center gap-2 mx-auto">
+                            <i data-lucide="sparkles" size="16"></i> Sign up with Magic Link
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMagicLink(container) {
+            const showRegion = formData.role === 'Team Manager' || formData.role === 'Admin';
+            const showManager = formData.role === 'Sales Representative';
+            const canSubmit = formData.email && formData.role !== '';
+
+            container.innerHTML = `
+                <div class="px-5 pb-8 space-y-5 fade-in-slide h-full flex flex-col justify-center">
+                    <div class="text-center shrink-0 mb-4 pt-4">
+                        <div class="w-20 h-20 bg-purple-50 text-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-purple-100 shadow-sm"><i data-lucide="sparkles" size="36"></i></div>
+                        <h2 class="text-[26px] font-black text-slate-900 tracking-tight">Sign Up</h2>
+                        <p class="text-slate-500 mt-2 text-[14px]">Create your account via magic link.</p>
+                    </div>
+                    
+                    <div class="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-2">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Email Address</label>
+                            <input type="email" class="${inputClass}" placeholder="name@company.com" value="${formData.email}" oninput="formData.email = this.value; renderMagicLink(document.getElementById('main-content')); lucide.createIcons();">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Your Role</label>
+                            <div class="relative">
+                                <select class="${inputClass} appearance-none cursor-pointer pr-10" onchange="formData.role = this.value; isRegionDropdownOpen = false; renderMagicLink(document.getElementById('main-content')); lucide.createIcons();">
+                                    <option value="" disabled ${formData.role === '' ? 'selected' : ''} hidden>Select your role...</option>
+                                    <option value="Sales Representative" ${formData.role === 'Sales Representative' ? 'selected' : ''}>Sales Representative</option>
+                                    <option value="Team Manager" ${formData.role === 'Team Manager' ? 'selected' : ''}>Team Manager</option>
+                                    <option value="Admin" ${formData.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size="16"></i>
+                            </div>
+                        </div>
+                        
+                        ${showRegion ? `
+                        <div class="fade-in-slide relative z-50">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Region Assignment (Multiple)</label>
+                            <div class="relative">
+                                <div class="${inputClass} flex justify-between items-center cursor-pointer select-none" onclick="toggleRegionDropdown()">
+                                    <span class="truncate block pr-4">${formData.regions.length > 0 ? formData.regions.join(', ') : 'Select regions...'}</span>
+                                    <i data-lucide="${isRegionDropdownOpen ? 'chevron-up' : 'chevron-down'}" class="text-slate-400 shrink-0 pointer-events-none" size="16"></i>
+                                </div>
+                                
+                                ${isRegionDropdownOpen ? `
+                                <!-- Invisible Backdrop to close dropdown -->
+                                <div class="fixed inset-0 z-40" onclick="toggleRegionDropdown()"></div>
+                                
+                                <!-- Dropdown Menu -->
+                                <div class="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto custom-scrollbar">
+                                    ${['Dallas', 'Chicago', 'New York', 'Los Angeles', 'Miami', 'Seattle'].map(r => `
+                                        <div class="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0 transition-colors" onclick="toggleRegion('${r}', event)">
+                                            <span class="text-[14px] ${formData.regions.includes(r) ? 'font-bold text-purple-700' : 'text-slate-700'}">${r}</span>
+                                            ${formData.regions.includes(r) ? `<i data-lucide="check" size="16" class="text-purple-600"></i>` : `<div class="w-4 h-4"></div>`}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        ${showManager ? `
+                        <div class="fade-in-slide">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Reporting Manager</label>
+                            <div class="relative">
+                                <select class="${inputClass} appearance-none cursor-pointer pr-10" onchange="formData.manager = this.value">
+                                    <option ${formData.manager === 'Jordan Smyth' ? 'selected' : ''}>Jordan Smyth</option>
+                                    <option ${formData.manager === 'Marcus Chen' ? 'selected' : ''}>Marcus Chen</option>
+                                    <option ${formData.manager === 'Priya Patel' ? 'selected' : ''}>Priya Patel</option>
+                                    <option ${formData.manager === 'David Kim' ? 'selected' : ''}>David Kim</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size="16"></i>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="pt-2 shrink-0">
+                        <button onclick="changeView('MAGIC_LINK_SENT')" ${canSubmit ? '' : 'disabled'} class="${primaryBtnStyle} disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-purple-600 disabled:active:scale-100">
+                            Send Link <i data-lucide="send" size="18"></i>
+                        </button>
+                    </div>
+                    <div class="mt-4 text-center shrink-0">
+                        <button onclick="changeView('LOGIN')" class="text-[13px] font-bold text-slate-500 hover:text-purple-600 transition-colors flex items-center justify-center gap-2 mx-auto">
+                            <i data-lucide="arrow-left" size="16"></i> Back to Login
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMagicLinkSent(container) {
+            container.innerHTML = `
+                <div class="text-center px-5 pb-10 fade-in-slide flex flex-col h-full">
+                    <div class="flex-1 flex flex-col items-center justify-center">
+                        <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center mb-6 shadow-md">
+                            <i data-lucide="mail" size="40" stroke-width="2.5"></i>
+                        </div>
+                        <h2 class="text-[28px] font-black text-slate-900 tracking-tight">Check Your Inbox</h2>
+                        <p class="text-slate-500 mt-4 text-[14px] max-w-[240px] mx-auto leading-relaxed">We sent a secure sign-in link to <strong class="text-slate-800">${formData.email || 'your email'}</strong>.</p>
+                        
+                        <div class="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left w-full shadow-sm">
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Simulation</p>
+                            <p class="text-[13px] text-slate-600 mb-4">Click below to simulate opening the magic link from your email and completing your profile setup.</p>
+                            <button onclick="startOnboardingFromLogin()" class="${primaryBtnStyle} !py-3 !text-[14px]">
+                                <i data-lucide="user" size="16"></i> Open Magic Link
+                            </button>
+                        </div>
+                    </div>
+                    <button onclick="changeView('MAGIC_LINK')" class="text-[13px] font-bold text-slate-500 hover:text-purple-600 transition-colors flex items-center justify-center gap-2 mx-auto">
+                        <i data-lucide="refresh-cw" size="16"></i> Resend Link
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderStep(container) {
+            const activeStep = currentFlow[currentStepIndex];
+            switch(activeStep) {
+                case 1: renderStep1(container); break;
+                case 2: renderStep2(container); break;
+                case 3: renderStep3(container); break;
+                case 4: renderStep4(container); break;
+                case 5: renderStep5(container); break;
+                case 6: renderStep6(container); break;
+                case 7: renderStep7(container); break;
+            }
+            lucide.createIcons();
+        }
+
+        function renderStep1(container) {
+            container.innerHTML = `
+                <div class="space-y-6 px-5 pb-8 fade-in-slide overflow-y-auto h-full pr-3 custom-scrollbar">
+                    <div class="text-center shrink-0 mb-2">
+                        <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-purple-100"><i data-lucide="user" size="28"></i></div>
+                        <h2 class="text-[20px] font-black text-slate-900 tracking-tight">Personal Profile</h2>
+                        <p class="text-slate-500 mt-1 text-[13px]">Primary identification and contacts.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">First Name</label><input type="text" value="${formData.firstName}" readonly class="${inputClass} bg-slate-100/60 cursor-not-allowed"></div>
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Last Name</label><input type="text" value="${formData.lastName}" readonly class="${inputClass} bg-slate-100/60 cursor-not-allowed"></div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Date of Birth</label>
+                            <div class="relative">
+                                <input type="date" oninput="updateData('dob', this.value)" value="${formData.dob}" class="${inputClass} pl-10 relative z-10 bg-transparent">
+                                <i data-lucide="calendar" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 z-0" size="18"></i>
+                                <!-- BG for date input since it needs transparent bg for webkit picker overlay hack -->
+                                <div class="absolute inset-0 bg-slate-50 border border-slate-200 rounded-xl -z-10 pointer-events-none"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Primary Mobile</label><input type="tel" oninput="updateData('phone', this.value)" value="${formData.phone}" placeholder="+1..." class="${inputClass}"></div>
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Secondary (Opt)</label><input type="tel" oninput="updateData('phoneAlt', this.value)" value="${formData.phoneAlt}" placeholder="+1..." class="${inputClass}"></div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Street Address</label>
+                            <input type="text" oninput="updateData('street', this.value)" value="${formData.street}" placeholder="123 Road Ave" class="${inputClass}">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">City</label><input type="text" oninput="updateData('city', this.value)" value="${formData.city}" placeholder="City" class="${inputClass}"></div>
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Postal Code</label><input type="text" oninput="updateData('postalCode', this.value)" value="${formData.postalCode}" placeholder="Zip" class="${inputClass}"></div>
+                        </div>
+                    </div>
+                    <button onclick="goNext()" class="${primaryBtnStyle} mt-4">Save Profile <i data-lucide="chevron-right" size="18"></i></button>
+                </div>
+            `;
+        }
+
+        function renderStep2(container) {
+            container.innerHTML = `
+                <div class="space-y-6 px-5 pb-8 fade-in-slide overflow-y-auto h-full pr-3 custom-scrollbar">
+                    <div class="text-center shrink-0 mb-2">
+                        <div class="w-14 h-14 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-amber-100"><i data-lucide="car" size="28"></i></div>
+                        <h2 class="text-[20px] font-black text-slate-900 tracking-tight">Driving Compliance</h2>
+                        <p class="text-slate-500 mt-1 text-[13px]">Road legality and insurance checks.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">License No.</label><input type="text" oninput="updateData('licenseNumber', this.value)" value="${formData.licenseNumber}" placeholder="ID-000" class="${inputClass}"></div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">License Class</label>
+                                <div class="relative">
+                                    <select onchange="updateData('licenseClass', this.value)" class="${inputClass} appearance-none pr-10">
+                                        <option>Class D</option><option>Class A (CDL)</option><option>Class B</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size="16"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Issue Date</label>
+                                <div class="relative">
+                                    <input type="date" oninput="updateData('licenseIssueDate', this.value)" value="${formData.licenseIssueDate}" class="${inputClass} pl-10 relative z-10 bg-transparent">
+                                    <i data-lucide="calendar" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 z-0" size="18"></i>
+                                    <div class="absolute inset-0 bg-slate-50 border border-slate-200 rounded-xl -z-10 pointer-events-none"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Expiry Date</label>
+                                <div class="relative">
+                                    <input type="date" oninput="updateData('licenseExpiry', this.value)" value="${formData.licenseExpiry}" class="${inputClass} pl-10 relative z-10 bg-transparent">
+                                    <i data-lucide="calendar" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 z-0" size="18"></i>
+                                    <div class="absolute inset-0 bg-slate-50 border border-slate-200 rounded-xl -z-10 pointer-events-none"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Carrier</label><input type="text" oninput="updateData('insuranceCarrier', this.value)" value="${formData.insuranceCarrier}" placeholder="Carrier Name" class="${inputClass}"></div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Vehicle</label>
+                                <div class="relative">
+                                    <select onchange="updateData('vehicleType', this.value)" class="${inputClass} appearance-none pr-10">
+                                        <option>Sedan</option><option>Truck</option><option>Van</option><option>SUV</option>
+                                    </select>
+                                    <i data-lucide="chevron-down" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size="16"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Compact Upload Dropzone -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-300 flex items-center justify-between mt-2 hover:border-purple-300 transition-colors cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center text-slate-400 border border-slate-100">
+                                    <i data-lucide="image-plus" size="18"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[13px] font-bold text-slate-700">License Photo</p>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Front & back scan</p>
+                                </div>
+                            </div>
+                            <button class="flex items-center gap-1.5 text-[11px] font-bold text-purple-700 bg-purple-50 border border-purple-100 px-3 py-2 rounded-lg hover:bg-purple-100 transition-colors"><i data-lucide="camera" size="14"></i> Upload</button>
+                        </div>
+                    </div>
+                    <button onclick="goNext()" class="${primaryBtnStyle} mt-4">Verify Assets <i data-lucide="chevron-right" size="18"></i></button>
+                </div>
+            `;
+        }
+
+        function renderStep3(container) {
+            const allConsented = formData.consents.privacy && formData.consents.background && formData.consents.terms;
+            const canSign = allConsented && formData.signature.length > 2;
+
+            container.innerHTML = `
+                <div class="flex flex-col h-full px-5 pb-8 fade-in-slide overflow-hidden">
+                    <div class="text-center mb-4 shrink-0">
+                        <h2 class="text-[20px] font-black text-slate-900 tracking-tight">Legal & Consent</h2>
+                        <p class="text-slate-400 mt-1 text-[11px] font-bold uppercase tracking-[0.1em]">Agreement v4.2</p>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4">
+                        <!-- Document Viewer -->
+                        <div class="relative bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-40 shrink-0">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-purple-600"></div>
+                            <div class="document-viewer flex-1 overflow-y-auto p-4 custom-scrollbar">
+                                <div class="max-w-full">
+                                    <h4 class="font-black text-slate-800 text-[12px] uppercase mb-3 border-b border-slate-100 pb-2">Disclosure & Terms</h4>
+                                    <div class="space-y-3 text-[11px] leading-relaxed text-slate-500 text-justify">
+                                        <p><span class="font-bold text-slate-700">1. DATA PROCESSING:</span> FieldSync Inc. will process your personal identification in accordance with our Privacy Framework.</p>
+                                        <p><span class="font-bold text-slate-700">2. LOCATION TRACKING:</span> You agree to allow high-accuracy GPS location data during active work sessions.</p>
+                                        <p><span class="font-bold text-slate-700">3. BACKGROUND VERIFICATION:</span> You authorize FieldSync to conduct standard background and driving checks.</p>
+                                        <p><span class="font-bold text-slate-700">4. ASSET USAGE:</span> Software and assets must strictly adhere to the FieldSync Code of Conduct.</p>
+                                        <p><span class="font-bold text-slate-700">5. CONFIDENTIALITY:</span> You agree to maintain the confidentiality of all proprietary company information.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2.5 shrink-0 pt-1">
+                            <div class="flex items-start gap-3 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-purple-300 transition-colors cursor-pointer" onclick="document.getElementById('privacy-chk').click()">
+                                <input type="checkbox" id="privacy-chk" onchange="updateConsent('privacy', this.checked)" ${formData.consents.privacy ? 'checked' : ''} onclick="event.stopPropagation()" class="mt-0.5 w-5 h-5 rounded border-slate-300 accent-purple-600 shrink-0 cursor-pointer">
+                                <label class="text-[13px] font-medium text-slate-700 leading-snug cursor-pointer select-none">I consent to the collection and processing of my personal data.</label>
+                            </div>
+                            <div class="flex items-start gap-3 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-purple-300 transition-colors cursor-pointer" onclick="document.getElementById('bg-chk').click()">
+                                <input type="checkbox" id="bg-chk" onchange="updateConsent('background', this.checked)" ${formData.consents.background ? 'checked' : ''} onclick="event.stopPropagation()" class="mt-0.5 w-5 h-5 rounded border-slate-300 accent-purple-600 shrink-0 cursor-pointer">
+                                <label class="text-[13px] font-medium text-slate-700 leading-snug cursor-pointer select-none">I authorize background and driving record checks.</label>
+                            </div>
+                            <div class="flex items-start gap-3 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-purple-300 transition-colors cursor-pointer" onclick="document.getElementById('terms-chk').click()">
+                                <input type="checkbox" id="terms-chk" onchange="updateConsent('terms', this.checked)" ${formData.consents.terms ? 'checked' : ''} onclick="event.stopPropagation()" class="mt-0.5 w-5 h-5 rounded border-slate-300 accent-purple-600 shrink-0 cursor-pointer">
+                                <label class="text-[13px] font-medium text-slate-700 leading-snug cursor-pointer select-none">I have read and agree to all terms outlined above.</label>
+                            </div>
+                        </div>
+
+                        <div class="relative pt-2 shrink-0">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Digital Signature</label>
+                            <div class="relative">
+                                <input type="text" oninput="updateSig(this.value)" class="w-full px-4 py-3.5 pl-10 bg-slate-50 border border-slate-200 rounded-xl text-[16px] font-cursive text-purple-800 shadow-sm focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all" placeholder="Type your full name..." value="${formData.signature}">
+                                <i data-lucide="pen-tool" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size="16"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="sig-btn" onclick="goNext()" ${canSign ? '' : 'disabled'} class="${primaryBtnStyle} mt-4 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed">
+                        Finish & Authorize <i data-lucide="shield-check" size="18"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderStep4(container) {
+            container.innerHTML = `
+                <div class="space-y-6 px-5 pb-8 fade-in-slide flex flex-col h-full">
+                    <div class="text-center shrink-0 mb-2 pt-2">
+                        <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-indigo-100"><i data-lucide="settings" size="28"></i></div>
+                        <h2 class="text-[20px] font-black text-slate-900 tracking-tight">Access Permissions</h2>
+                        <p class="text-slate-500 mt-1 text-[13px]">Essential device hardware permissions.</p>
+                    </div>
+                    <div class="flex-1 space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl transition-colors cursor-pointer hover:border-purple-300" onclick="document.querySelector('#loc-chk').click()">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 ${formData.locationEnabled ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-500'} flex items-center justify-center rounded-xl transition-colors"><i data-lucide="map-pin" size="20"></i></div>
+                                <div><p class="text-[15px] font-bold text-slate-800 tracking-tight">Field Location</p><p class="text-[12px] text-slate-500 mt-0.5">Route and check-in tracking.</p></div>
+                            </div>
+                            <input type="checkbox" id="loc-chk" onchange="formData.locationEnabled = this.checked; renderStep(document.getElementById('main-content'))" ${formData.locationEnabled ? 'checked' : ''} class="w-6 h-6 rounded border-slate-300 accent-purple-600 cursor-pointer pointer-events-none">
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl transition-colors cursor-pointer hover:border-purple-300" onclick="document.querySelector('#cam-chk').click()">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 ${formData.cameraEnabled ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-500'} flex items-center justify-center rounded-xl transition-colors"><i data-lucide="camera" size="20"></i></div>
+                                <div><p class="text-[15px] font-bold text-slate-800 tracking-tight">Media Access</p><p class="text-[12px] text-slate-500 mt-0.5">Photos of sites and receipts.</p></div>
+                            </div>
+                            <input type="checkbox" id="cam-chk" onchange="formData.cameraEnabled = this.checked; renderStep(document.getElementById('main-content'))" ${formData.cameraEnabled ? 'checked' : ''} class="w-6 h-6 rounded border-slate-300 accent-purple-600 cursor-pointer pointer-events-none">
+                        </div>
+                    </div>
+                    <button onclick="goNext()" class="${primaryBtnStyle}">Grant Access <i data-lucide="chevron-right" size="18"></i></button>
+                </div>
+            `;
+        }
+
+        function renderStep5(container) {
+            container.innerHTML = `
+                <div class="space-y-6 px-5 pb-8 fade-in-slide flex flex-col h-full">
+                    <div class="text-center shrink-0 mb-2 pt-2">
+                        <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-emerald-100"><i data-lucide="graduation-cap" size="28"></i></div>
+                        <h2 class="text-[20px] font-black text-slate-900 tracking-tight">Training Modules</h2>
+                        <p class="text-slate-400 mt-1 text-[11px] font-bold uppercase tracking-[0.15em]">Mandatory Prep</p>
+                    </div>
+                    <div class="flex-1 space-y-3.5 overflow-y-auto custom-scrollbar pr-2">
+                        <label class="p-4 rounded-2xl bg-white border border-slate-200 flex justify-between items-center shadow-sm hover:border-purple-300 transition-colors cursor-pointer">
+                            <div class="flex gap-4 items-center">
+                                <div class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center"><i data-lucide="play" size="18"></i></div>
+                                <div><p class="text-[14px] font-bold text-slate-800 tracking-tight">Platform Intro</p><p class="text-[12px] text-slate-500 mt-0.5">Essential navigation (3m).</p></div>
+                            </div>
+                            <input type="checkbox" class="w-5 h-5 rounded border-slate-300 accent-purple-600 cursor-pointer">
+                        </label>
+                        <label class="p-4 rounded-2xl bg-white border border-slate-200 flex justify-between items-center shadow-sm hover:border-purple-300 transition-colors cursor-pointer">
+                            <div class="flex gap-4 items-center">
+                                <div class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center"><i data-lucide="video" size="18"></i></div>
+                                <div><p class="text-[14px] font-bold text-slate-800 tracking-tight">CRM & Routing</p><p class="text-[12px] text-slate-500 mt-0.5">Manage leads and paths (8m).</p></div>
+                            </div>
+                            <input type="checkbox" class="w-5 h-5 rounded border-slate-300 accent-purple-600 cursor-pointer">
+                        </label>
+                        <label class="p-4 rounded-2xl bg-white border border-slate-200 flex justify-between items-center shadow-sm hover:border-purple-300 transition-colors cursor-pointer">
+                            <div class="flex gap-4 items-center">
+                                <div class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center"><i data-lucide="shield" size="18"></i></div>
+                                <div><p class="text-[14px] font-bold text-slate-800 tracking-tight">Safety Protocol</p><p class="text-[12px] text-slate-500 mt-0.5">Road and field safety (5m).</p></div>
+                            </div>
+                            <input type="checkbox" class="w-5 h-5 rounded border-slate-300 accent-purple-600 cursor-pointer">
+                        </label>
+                    </div>
+                    <button onclick="goNext()" class="${primaryBtnStyle}">Complete <i data-lucide="chevron-right" size="18"></i></button>
+                </div>
+            `;
+        }
+
+        function renderStep6(container) {
+            const metricGroup = (title, items) => `
+                <div class="mb-5">
+                    <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">${title}</h4>
+                    <div class="space-y-2">
+                        ${items.map(item => {
+                            const isChecked = formData.vpSettings[item.key];
+                            return `
+                                <label class="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-[1rem] shadow-sm hover:border-purple-200 transition-all cursor-pointer group">
+                                    <span class="text-[13px] font-bold text-slate-700 group-hover:text-purple-700 transition-colors">${item.label}</span>
+                                    <div class="relative flex items-center justify-center">
+                                        <input type="checkbox" onchange="toggleVPSettings('${item.key}')" ${isChecked ? 'checked' : ''} class="peer appearance-none w-5 h-5 border-2 border-slate-200 rounded-md checked:border-purple-600 checked:bg-purple-600 transition-all cursor-pointer shadow-inner">
+                                        <i data-lucide="check" size="12" class="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"></i>
+                                    </div>
+                                </label>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+
+            if (formData.role === 'Team Manager' || formData.role === 'Admin') {
+                container.innerHTML = `
+                    <div class="space-y-4 px-5 pb-8 fade-in-slide flex flex-col h-full overflow-hidden">
+                        <div class="text-center shrink-0 mb-1 pt-2">
+                            <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-purple-100"><i data-lucide="layout-dashboard" size="28"></i></div>
+                            <h2 class="text-[20px] font-black text-slate-900 tracking-tight">Dashboard Access</h2>
+                            <p class="text-slate-500 mt-1 text-[13px]">Your provisioned analytics and views.</p>
+                        </div>
+                        
+                        <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-2">
+                            ${metricGroup('Team Insights', [
+                                {key: 'team_top', label: 'Top Performers'},
+                                {key: 'team_under', label: 'Underperformers'},
+                                {key: 'team_score', label: 'Team Activity Score'}
+                            ])}
+                            ${metricGroup('Advanced Efficiency', [
+                                {key: 'eff_windshield', label: 'Windshield vs. Face Time'},
+                                {key: 'eff_meeting', label: 'Meeting Success Rate'},
+                                {key: 'eff_crm', label: 'CRM Capture Rate'}
+                            ])}
+                            ${metricGroup('Pipeline', [
+                                {key: 'pipe_value', label: 'Pipeline Value'},
+                                {key: 'pipe_stuck', label: 'Stuck Deals'}
+                            ])}
+                            ${metricGroup('Alerts (Critical)', [
+                                {key: 'alert_risk', label: 'Risk Alerts'}
+                            ])}
+                        </div>
+
+                        <button onclick="goNext()" class="${primaryBtnStyle} shrink-0 mt-2">
+                            Acknowledge Access <i data-lucide="check" size="18"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                const toggleComponent = (key, icon, title, desc, activeBgColor) => `
+                    <div class="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl hover:border-purple-200 transition-colors cursor-pointer shadow-sm" onclick="toggleNotification('${key}')">
+                        <div class="flex gap-4 items-center">
+                            <div class="w-11 h-11 ${formData.notifications[key] ? activeBgColor + ' text-white' : 'bg-slate-100 text-slate-500'} rounded-xl flex items-center justify-center transition-colors">
+                                <i data-lucide="${icon}" size="20"></i>
+                            </div>
+                            <div>
+                                <p class="text-[14px] font-bold text-slate-800 tracking-tight">${title}</p>
+                                <p class="text-[11px] text-slate-500 font-medium mt-0.5">${desc}</p>
+                            </div>
+                        </div>
+                        <div class="w-12 h-[26px] ${formData.notifications[key] ? activeBgColor : 'bg-slate-200'} rounded-full relative toggle-bg flex items-center px-1 transition-colors duration-300">
+                            <div class="w-4.5 h-4.5 bg-white rounded-full shadow-sm toggle-dot transform ${formData.notifications[key] ? 'translate-x-[20px]' : 'translate-x-0'} transition-transform duration-300" style="width: 18px; height: 18px;"></div>
+                        </div>
+                    </div>
+                `;
+
+                container.innerHTML = `
+                    <div class="space-y-6 px-5 pb-8 fade-in-slide flex flex-col h-full overflow-hidden">
+                        <div class="text-center shrink-0 mb-2 pt-2">
+                            <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-purple-100"><i data-lucide="bell-ring" size="28"></i></div>
+                            <h2 class="text-[20px] font-black text-slate-900 tracking-tight">Communication</h2>
+                            <p class="text-slate-500 mt-1 text-[13px]">Customize your workspace alerts.</p>
+                        </div>
+                        
+                        <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3 pb-2">
+                            ${toggleComponent('dispatch', 'send', 'Job Dispatch Alert', 'Instant assignment pings.', 'bg-purple-600')}
+                            ${toggleComponent('followUp', 'phone-forwarded', 'Follow-up Alert', 'Customer callback reminders.', 'bg-fuchsia-600')}
+                            ${toggleComponent('tasks', 'calendar-clock', 'Pending Task Alert', 'Upcoming deadline notifications.', 'bg-pink-500')}
+                            ${toggleComponent('checklist', 'clipboard-check', 'Checklist Alert', 'Site requirements reminder.', 'bg-indigo-500')}
+                        </div>
+
+                        <div class="bg-purple-50 p-3.5 rounded-xl border border-purple-100 shrink-0 flex items-center justify-center">
+                            <div class="flex gap-2 items-center text-purple-700">
+                                <i data-lucide="info" size="14"></i>
+                                <span class="text-[11px] font-bold uppercase tracking-wider">Preference saved locally</span>
+                            </div>
+                        </div>
+
+                        <button onclick="goNext()" class="${primaryBtnStyle}">
+                            Verify Settings <i data-lucide="check" size="18"></i>
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderStep7(container) {
+            container.innerHTML = `
+                <div class="text-center px-5 pb-10 fade-in-slide flex flex-col h-full">
+                    <div class="flex-1 flex flex-col items-center justify-center">
+                        <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center mb-6 shadow-md">
+                            <i data-lucide="check" size="40" stroke-width="3"></i>
+                        </div>
+                        <h2 class="text-[28px] font-black text-slate-900 tracking-tight">Account Active</h2>
+                        <p class="text-slate-500 mt-4 text-[14px] max-w-[240px] mx-auto leading-relaxed">Consent received and documentation verified for <strong class="text-slate-800">${formData.firstName} ${formData.lastName}</strong>.</p>
+                    </div>
+                    <button onclick="goToLogin()" class="${primaryBtnStyle} group">Continue to Login <i data-lucide="arrow-right" size="18" class="group-hover:translate-x-1 transition-transform"></i></button>
+                </div>
+            `;
+        }
+
+        function changeView(view) {
+            isRegionDropdownOpen = false;
+            showLoading(() => {
+                currentView = view;
+                render();
+            });
+        }
+
+        function startOnboarding() {
+            showLoading(() => {
+                isRegionDropdownOpen = false;
+                const roleSelect = document.getElementById('inviteRole');
+                if (roleSelect) formData.role = roleSelect.value;
+                const managerSelect = document.getElementById('inviteManager');
+                if (managerSelect) formData.manager = managerSelect.value;
+                
+                if (formData.role === 'Team Manager' || formData.role === 'Admin') {
+                    currentFlow = [1, 4, 6, 7];
+                } else {
+                    currentFlow = [1, 2, 3, 4, 5, 6, 7];
+                }
+
+                currentView = 'ONBOARDING';
+                currentStepIndex = 0;
+                render();
+            });
+        }
+
+        function startOnboardingFromLogin() {
+            showLoading(() => {
+                isRegionDropdownOpen = false;
+                // Clear out demo data so user inputs their own
+                formData.firstName = '';
+                formData.lastName = '';
+                
+                if (formData.role === 'Team Manager' || formData.role === 'Admin') {
+                    currentFlow = [1, 4, 6, 7];
+                } else {
+                    currentFlow = [1, 2, 3, 4, 5, 6, 7];
+                }
+                
+                currentView = 'ONBOARDING';
+                currentStepIndex = 0;
+                render();
+            });
+        }
+
+        function goNext() {
+            showLoading(() => {
+                if (currentStepIndex < currentFlow.length - 1) {
+                    currentStepIndex++;
+                }
+                render();
+            });
+        }
+
+        function resetToDash() {
+            showLoading(() => {
+                currentView = 'TEAM_DASHBOARD';
+                currentStepIndex = 0;
+                render();
+            });
+        }
+
+        function goToLogin() {
+            showLoading(() => {
+                currentView = 'LOGIN';
+                render();
+            });
+        }
+
+        function goToMagicLinkSignup() {
+            showLoading(() => {
+                formData.role = ''; // Reset role for fresh signup
+                currentView = 'MAGIC_LINK';
+                render();
+            });
+        }
+
+        function updateSig(val) {
+            formData.signature = val;
+            checkStep3Completion();
+        }
+
+        function checkStep3Completion() {
+            const allConsented = formData.consents.privacy && formData.consents.background && formData.consents.terms;
+            const canSign = allConsented && formData.signature.length > 2;
+            const btn = document.getElementById('sig-btn');
+            if (btn) {
+                btn.disabled = !canSign;
+            }
+        }
+
+        window.onload = () => render();
+    </script>
+</body>
+</html>
