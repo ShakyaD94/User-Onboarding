@@ -172,8 +172,8 @@
         };
 
         const existingUsers = [
-            { id: 1, name: 'Alex Rivera', role: 'Business Owner', initial: 'AR', color: 'bg-emerald-500 text-white' },
-            { id: 2, name: 'Sarah Chen', role: 'Vice President', initial: 'SC', color: 'bg-amber-500 text-white' },
+            { id: 1, name: 'Alex Rivera', role: 'Admin', initial: 'AR', color: 'bg-emerald-500 text-white' },
+            { id: 2, name: 'Sarah Chen', role: 'Team Manager', initial: 'SC', color: 'bg-amber-500 text-white' },
             { id: 3, name: 'Jordan Smyth', role: 'Team Manager', initial: 'JS', color: 'bg-indigo-500 text-white' },
             { id: 4, name: 'Riley Vance', role: 'Sales Rep', initial: 'RV', color: 'bg-purple-500 text-white' },
             { id: 5, name: 'Taylor Reed', role: 'Sales Rep', initial: 'TR', color: 'bg-pink-500 text-white' },
@@ -313,16 +313,16 @@
                         <button onclick="changeView('INVITE_FORM')" class="${primaryBtnStyle}">
                             <i data-lucide="plus" size="18"></i> Invite New Member
                         </button>
-                        <button onclick="changeView('LOGIN')" class="w-full py-3.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-[15px] rounded-2xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0">
+                        <!-- <button onclick="changeView('LOGIN')" class="w-full py-3.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-[15px] rounded-2xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0">
                             <i data-lucide="log-in" size="18"></i> Go to Login Screen
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             `;
         }
 
         function renderInviteForm(container) {
-            const showRegion = formData.role === 'Team Manager' || formData.role === 'Admin';
+            const showRegion = formData.role === 'Team Manager';
             const showManager = formData.role === 'Sales Representative';
             
             container.innerHTML = `
@@ -434,7 +434,7 @@
         }
 
         function renderMagicLink(container) {
-            const showRegion = formData.role === 'Team Manager' || formData.role === 'Admin';
+            const showRegion = formData.role === 'Team Manager';
             const showManager = formData.role === 'Sales Representative';
             const canSubmit = formData.email && formData.role !== '';
 
